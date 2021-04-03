@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../common/style.css">
+</head>
+<style>
+    .canvas {
+        height: calc(100vh - 150px);
+        margin-bottom: 30px;
+    }
+</style>
+<body>
+    <div class="container">
+        <canvas class="js-canvas canvas"></canvas>
+        <a href="/?full#slide-8">Презентация</a>
+    </div>
+
+    <script type="notjs" class="js-vertex-shader">
+        attribute vec4 a_position;
+        attribute vec2 a_texcoord;
+        
+        uniform mat4 u_matrix;
+        
+        varying vec2 v_texcoord;
+        
+        void main() {
+           gl_Position = u_matrix * a_position;
+           v_texcoord = a_texcoord;
+        }
+
+    </script>
+
+    <script type="notjs" class="js-fragment-shader">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+        uniform vec2 u_mouse;
+
+        float frequency = 100.0;
+        float amplitude = 0.005;
+        float speed = 0.03;
+
+        
+        void main() {
+            // float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude;
+            // vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            vec4 maps = texture2D(u_map, v_texcoord);
+
+            float depthMap = maps.r;
+            // float distortionMap = maps.g;
+
+            vec2 parallax = u_mouse * 0.003;
+            // vec2 distortedPosition = vec2(v_texcoord.x+distortion*depthMap, v_texcoord.y);
+            // vec4 color = texture2D(u_texture, distortedPosition + parallax*depthMap);
+            vec4 color = texture2D(u_texture, v_texcoord + parallax*depthMap);
+            // vec4 color = texture2D(u_texture, distortedPosition);
+
+
+            // gl_FragColor = texture2D(u_texture, vec2(v_texcoord.x + distortion*maps.r, v_texcoord.y));
+            gl_FragColor = color;
+        }
+        
+    </script>
+
+    <script src="webgl-utils.js"></script>
+    <script src="m4.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

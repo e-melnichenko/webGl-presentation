@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../common/style.css">
+</head>
+<body>
+    <div class="hot-air-2__row">
+        <canvas class="js-canvas"></canvas>
+        <img src="map.jpg" alt="" class="hot-air-2__map">
+    </div>
+    <div class="container">
+        <a href="/?full#slide-7">Презентация</a>
+    </div>
+    <script type="notjs" class="js-vertex-shader">
+        attribute vec4 a_position;
+        attribute vec2 a_texcoord;
+        
+        uniform mat4 u_matrix;
+        
+        varying vec2 v_texcoord;
+        
+        void main() {
+           gl_Position = u_matrix * a_position;
+           v_texcoord = a_texcoord;
+        }
+
+    </script>
+
+
+    <script type="notjs" class="js-fragment-shader">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+
+        float frequency = 100.0;
+        float amplitude = 0.001;
+        float speed = 0.05;
+
+        
+        void main() {
+            float map = texture2D(u_map, v_texcoord).r;
+            float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude * map;
+            vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            gl_FragColor = texture2D(u_texture, vec2(position.x , position.y));
+        }
+    </script>
+
+    <script src="webgl-utils.js"></script>
+    <script src="m4.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

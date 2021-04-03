@@ -1,0 +1,16 @@
+/* @import url("https://webglfundamentals.org/webgl/resources/webgl-tutorials.css"); */
+
+body {
+    margin: 0;
+    background-color: #fff;
+}
+/* canvas {
+    width: 498px;
+    height: 298px;
+    display: block;
+  } */
+  #ui {
+    width: 200px;
+  }
+
+

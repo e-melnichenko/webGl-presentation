@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Эффекты - ограничение области</h1>
+        <div class="row">
+            <!-- <canvas class="js-canvas canvas" width="400" height="300"></canvas> -->
+            <div class="canvas-container effects__canvas js-canvas-container _hidden">
+                <canvas class="canvas js-canvas"></canvas>
+                <img src="../common/img/cat.jpg" class="js-img" crossorigin="anonymous">
+            </div>
+            <div class=" effects__inputs js-container">
+                <ul class="js-list"></ul>
+            </div>
+        </div>
+        <p>
+            <a href="/ice-effect/">Прозрачность</a>
+        </p>
+        <p>
+            <a href="/?full&next=1#slide-5">Презентация</a>
+        </p>
+    </div>
+
+
+    <style>
+        .canvas {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        .canvas-container {
+            position: relative;
+            margin-left: auto;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+
+    <script type="notjs" class ="js-vertex-shader-2d">
+        attribute vec2 a_position;
+        attribute vec2 a_texCoord;
+        
+        uniform vec2 u_center;
+        uniform float u_radius;
+        uniform vec2 u_resolution;
+        uniform float u_flipY;
+        uniform float u_stretch;
+
+        varying vec2 v_texCoord;
+        varying vec2 resolution;
+        varying float radius;
+        varying float stretch;
+        varying vec2 center;
+
+
+
+        void main() {
+            vec2 zeroToOne = a_position / u_resolution;
+
+            vec2 zeroToTwo = zeroToOne * 2.0;
+            vec2 clipSpace = zeroToTwo - 1.0;
+
+            gl_Position = vec4(clipSpace * vec2(1, u_flipY), 0, 1);
+
+            // передает в фрагментный шейдер
+            v_texCoord = a_texCoord;
+            radius = u_radius;
+            center = u_center;
+            resolution = u_resolution;
+            stretch = u_stretch;
+        }
+    </script>
+
+    <script class="js-fragment-shader-2d" type="notjs">
+        precision mediump float;
+
+        uniform sampler2D u_image;
+        uniform vec2 u_textureSize;
+        uniform float u_kernel[9];
+        uniform float u_kernelWeight;
+
+        uniform bool u_framebuffer;
+
+        // из вершинного шейдера
+        varying vec2 v_texCoord;
+        
+        varying vec2 center;
+        varying vec2 resolution;
+        varying float radius;
+        varying float stretch;
+
+        void main() {
+            vec4 color0 = vec4(0.0, 0.0, 0.0, 0.0);
+
+            float x = gl_FragCoord.x / stretch;
+            float y = (resolution[1] - gl_FragCoord.y) / stretch;
+        
+            float dx = center[0] - x;
+            float dy = center[1] - y;
+            float distance = sqrt(dx*dx + dy*dy);
+            
+            if ( distance < radius || u_framebuffer) {
+                vec2 onePixel = vec2(1.0, 1.0) / u_textureSize;
+                vec4 colorSum = 
+                    texture2D(u_image, v_texCoord + onePixel * vec2(-1, -1)) * u_kernel[0] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 0, -1)) * u_kernel[1] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 1, -1)) * u_kernel[2] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2(-1,  0)) * u_kernel[3] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 0,  0)) * u_kernel[4] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 1,  0)) * u_kernel[5] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2(-1,  1)) * u_kernel[6] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 0,  1)) * u_kernel[7] +
+                    texture2D(u_image, v_texCoord + onePixel * vec2( 1,  1)) * u_kernel[8];
+                
+                gl_FragColor = vec4((colorSum / u_kernelWeight).rgb, 1);
+            }
+        }
+    </script>
+
+    <script src="webgl-utils.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>

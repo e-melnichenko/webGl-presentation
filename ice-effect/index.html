@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/style.css">
+    <title>WebGL effects</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Прозрачность</h1>
+        <div class="canvas-container effects__canvas js-canvas-container _hidden">
+            <canvas class="canvas js-canvas"></canvas>
+            <img src="after.png" alt="" class="js-img img" crossorigin="anonymous">
+        </div>
+        <p>
+            <a href="/?full&next=1#slide-5">Презентация</a>
+        </p>
+        
+    </div>
+
+
+    <style>
+        .canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            margin: 0 auto;
+            width: 500px;
+        }
+
+        .img {
+            width: 100%;
+        }
+    </style>
+
+    <script type="notjs" class ="js-vertex-shader-2d">
+        attribute vec2 a_position;
+        attribute vec2 a_texCoord;
+        
+        uniform vec2 u_resolution;
+        
+        varying vec2 v_texCoord;
+        varying vec2 v_resolution;
+        
+        void main() {
+           // convert the rectangle from pixels to 0.0 to 1.0
+           vec2 zeroToOne = a_position / u_resolution;
+        
+           // convert from 0->1 to 0->2
+           vec2 zeroToTwo = zeroToOne * 2.0;
+        
+           // convert from 0->2 to -1->+1 (clipspace)
+           vec2 clipSpace = zeroToTwo - 1.0;
+        
+           gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+        
+           // pass the texCoord to the fragment shader
+           // The GPU will interpolate this value between points.
+           v_texCoord = a_texCoord;
+           v_resolution = u_resolution;
+        }
+    </script>
+
+    <script class="js-fragment-shader-2d" type="notjs">
+        precision mediump float;
+
+        // our texture
+        uniform sampler2D u_image;
+        uniform vec2 u_center;
+        uniform float u_radius;
+        uniform float u_stretch;
+        
+        // the texCoords passed in from the vertex shader.
+        varying vec2 v_texCoord;
+        varying vec2 v_resolution;
+
+        void main() {
+            float x = gl_FragCoord.x;
+            float y = v_resolution[1] - gl_FragCoord.y;
+        
+            float dx = u_center[0] - x * u_stretch;
+            float dy = u_center[1] - y * u_stretch;
+            float distance = sqrt(dx*dx + dy*dy);
+            vec4 color = texture2D(u_image, v_texCoord);
+
+            if(distance <= u_radius) {
+                float alpha = distance / u_radius;
+                alpha *= alpha;
+                
+                color.a = alpha;
+            }
+
+            gl_FragColor = color;
+        }
+    </script>
+
+    <script src="webgl-utils.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>

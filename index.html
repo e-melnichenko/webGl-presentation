@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Shower Presentation Engine</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="shower/themes/ribbon/styles/styles.css">
+    <style>
+        .shower {
+            --slide-ratio: calc(16 / 9);
+        }
+
+        ._hidden {
+            /* visibility: hidden; */
+            opacity: 0;
+            /* display: none!important; */
+        }
+    </style>
+</head>
+<body class="shower list _hidden">
+
+    <style>
+        canvas {
+            width: 384px;
+            height: 256px;
+        }
+    </style>
+    <header class="caption">
+        <h1>Shower Presentation Engine</h1>
+        <p>Yours Truly, Famous Inc.</p>
+    </header>
+    <section class="slide" id="slide-0">
+        <h2>Основы WebGL. 2D-эффекты.</h2>
+        <style>
+            #slide-0 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+        </style>
+    </section>
+    <section class="slide" id="slide-1">
+        <h2>Определения </h2>
+        <p class="next"><span style="font-weight: 700;">WebGl</span> - средство растеризации, отображает точки, линии и треугольники на основе написанного кода. Выполняется на графическом процессоре компьютера.</p>
+        <p class="next"><span style="font-weight: 700;">GLSL</span> - язык для программирования шейдеров.</p>
+    </section>
+    <section class="slide" id="slide-2">
+        <h2>CPU vs GPU</h2>
+        <div class="video-size">
+            <div class="video-wrap">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/-P28LKWTzrI?start=15" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+    <style>
+        #slide-2 .video-wrap {
+            position: relative;
+            padding-top: 56.25%;
+        }
+
+        #slide-2 iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        #slide-2 .video-size {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        #slide-2::after {
+            z-index: 2;
+        }
+    </style>
+    <section class="slide" id="slide-3">
+        <h2>Принцип работы</h2>
+        <div class="columns two">
+            <div>
+                <h3>
+                    Вершинный шейдер
+                </h3>
+                <pre>
+                    <code>attribute vec4 <mark>a_position;</mark></code>
+                    <code>void main() {</code>
+                    <code>  gl_Position = <mark>a_position;</mark></code>
+                    <code>}</code>
+                </pre>
+            </div>
+            <div>
+                <h3>
+                    Фрагментный шейдер
+                </h3>
+                <pre>
+                    <code>void main() {</code>
+                    <code>  gl_FragColor = <mark>vec4(1, 0, 0, 1);</mark></code>
+                    <code>}</code>
+                </pre>
+            </div>
+        </ul>
+
+    </section>
+    <style>
+        #slide-3 ul {
+            display: flex;
+        }
+
+        #slide-3 h3 {
+            margin-top: 0;
+        }
+
+        #slide-3 code {
+            font-size: 18px;
+        }
+    </style>
+    <section class="slide" id="slide-4">
+        <h2>Рендер текстуры</h2>
+        <ol>
+            <li class="next">Читаем данные.</li>
+            <li class="next">Изменяем положение/цвет каждого пикселя.</li>
+            <li class="next">Отображаем на <code>&lt;canvas&gt;</code>.</li>
+        </ol>
+        <a class="next" href="/change-color/">Демо</a>
+    </section>
+    <section class="slide" id="slide-5">
+        <h2>Эффекты</h2>
+        <h4 style="margin-bottom: 10px;">Ядро свертки</h4>
+        <div class="columns two">
+            <p>
+                <mark>color = colorSum / kernelWeight</mark>
+            </p>
+            <div class="" style="text-align: center;">
+                <a href="/effects/">Демо</a>
+            </div>
+        </div>
+        <div class="columns three next">
+            <div class="">
+                <p style="margin-bottom: 0">Default</p>
+                <pre>
+                    0&nbsp;&nbsp;0&nbsp;&nbsp;0<br>
+                    0&nbsp;&nbsp;1&nbsp;&nbsp;0<br>
+                    0&nbsp;&nbsp;0&nbsp;&nbsp;0<br>
+                </pre>
+            </div>
+            <div class="">
+                <p style="margin-bottom: 0">Blur</p>
+                <pre>
+                    1&nbsp;&nbsp;2&nbsp;&nbsp;1<br>
+                    2&nbsp;&nbsp;4&nbsp;&nbsp;2<br>
+                    1&nbsp;&nbsp;2&nbsp;&nbsp;1<br>
+                </pre>
+            </div>
+            <div class="">
+                <p style="margin-bottom: 0">Edge detect</p>
+                <pre>
+                    -5&nbsp;&nbsp;0&nbsp;&nbsp;0<br>
+                    &nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0<br>
+                    &nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;5<br>
+                </pre>
+            </div>
+
+        </div>
+    </section>
+    <section class="slide" id="slide-6">
+        <h2>Изменение положения точки, <br> эффект марева</h2>
+        <div class="row">
+            <img src="./img/heat.jpg" alt="">
+            <a href="/hot-air/">Демо</a>
+        </div>
+    </section>
+    <section class="slide" id="slide-7">
+        <h2>Текстура как карта</h2>
+        <p>Используем еще одно изображение в качестве карты для интенсивности применения эффекта</p>
+        <div class="row">
+            <img src="./img/map.jpg" alt="">
+            <a href="/hot-air-map/">Демо</a>
+        </div>
+        <style>
+            img {
+                max-width: 100%;
+                display: block;
+            }
+
+            #slide-6 img {
+                max-height: 35vh;
+                margin-right: auto;
+            }
+
+            #slide-7 img, 
+            #slide-8 img {
+                max-height: 25vh;
+                margin-right: auto;
+                outline: 1px solid #4b86c2;
+            }
+
+            #slide-6 .row, 
+            #slide-7 .row,
+            #slide-8 .row {
+                align-items: flex-end;
+            }
+            #slide-6 a, 
+            #slide-7 a, 
+            #slide-8 a {
+                margin-left: auto;;
+            }
+
+            .row {
+                display: flex;
+            }
+        </style>
+    </section>
+    <section class="slide" id="slide-8">
+        <h2>Текстура как карта</h2>
+        <p>Используем карту чтобы перемещать часть объектов.</p>
+        <div class="row">
+            <img src="./img/desert-map-2.jpg" alt="">
+            <a href="/custom-map/">Демо</a>
+        </div>
+
+        <style>
+            /* #slide-8 img {
+                max-height: 
+            } */
+        </style>
+    </section>
+    <section class="slide" id="slide-9">
+        <h2>Использование библиотек</h2>
+        <p>C помощью библиотек и движков можно создавать браузерные игры, сложные анимации и имитировать физические явления.</p>
+        <a href="/slider/">Слайдер на WebGL</a>
+    </section>
+    <section class="slide" id="slide-10">
+        <h2 style="color: #4b86c2;">Спасибо!</h2>
+        <style>
+            #slide-10 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+            #slide-10 h2 {
+                margin: 0;
+                margin-bottom: 100px;
+            }
+        </style>
+    </section>
+
+
+    <footer class="badge">
+        <a href="https://github.com/shower/shower">Fork me on GitHub</a>
+    </footer>
+
+    <div class="progress"></div>
+
+    <script src="shower/shower.js"></script>
+    <script src="js/m4.js"></script>
+    <script src="js/webgl-utils.js"></script>
+    <script src="js/script.js"></script>
+    <!-- Copyright © 2020 Yours Truly, Famous Inc. -->
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../common/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1
+            class="js-title"
+            data-step-0="Рендер без изменений"
+            data-step-1="Смещаем x в зависимости от y"
+            data-step-2="Используем sin или cos для волны"
+            data-step-3="Смещаем волну во времени"
+        >
+            Рендер без изменений
+        </h1>
+        <canvas class="js-canvas hot-air__canvas"></canvas>
+        <div class="hot-air__btn-row">
+            <button class="js-prev">Назад</button>
+            <a href="/?full#slide-6">Презентация</a>
+            <button class="js-next">Далее</button>
+        </div>
+
+    </div>
+    <script type="notjs" class="js-vertex-shader">
+        attribute vec4 a_position;
+        attribute vec2 a_texcoord;
+        
+        uniform mat4 u_matrix;
+        
+        varying vec2 v_texcoord;
+        
+        void main() {
+           gl_Position = u_matrix * a_position;
+           v_texcoord = a_texcoord;
+        }
+
+    </script>
+
+    <script type="notjs" class="js-fragment-shader" data-step="0">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+
+        float frequency = 100.0;
+        float amplitude = 0.005;
+        float speed = 0.03;
+
+        
+        void main() {
+            // float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude;
+            // vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            gl_FragColor = texture2D(u_texture, v_texcoord);
+            // gl_FragColor = texture2D(u_texture, position);
+            // float map = texture2D(u_map, position).r;
+            // gl_FragColor = texture2D(u_texture, vec2(position.x * map, position.y));
+        }
+    </script>
+
+    <script type="notjs" class="js-fragment-shader" data-step="1">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+
+        float frequency = 100.0;
+        float amplitude = 0.005;
+        float speed = 0.03;
+
+        
+        void main() {
+            // float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude;
+            float distortion = v_texcoord.y * 0.2;
+            vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            gl_FragColor = texture2D(u_texture, position);
+            // gl_FragColor = texture2D(u_texture, position);
+            // float map = texture2D(u_map, position).r;
+            // gl_FragColor = texture2D(u_texture, vec2(position.x * map, position.y));
+        }
+    </script>
+
+    <script type="notjs" class="js-fragment-shader" data-step="2">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+
+        float frequency = 500.0;
+        float amplitude = 0.005;
+        float speed = 0.03;
+
+        
+        void main() {
+            // float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude;
+            float distortion = sin(v_texcoord.y * 0.2 * frequency) * amplitude;
+            vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            gl_FragColor = texture2D(u_texture, position);
+            // gl_FragColor = texture2D(u_texture, position);
+            // float map = texture2D(u_map, position).r;
+            // gl_FragColor = texture2D(u_texture, vec2(position.x * map, position.y));
+        }
+    </script>
+
+    <script type="notjs" class="js-fragment-shader" data-step="3">
+        precision mediump float;
+
+        varying vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform sampler2D u_map;
+        uniform float u_time;
+
+        float frequency = 100.0;
+        float amplitude = 0.005;
+        float speed = 0.03;
+
+        
+        void main() {
+            float distortion = sin(v_texcoord.y * frequency + u_time * speed) * amplitude;
+            vec2 position  = vec2(v_texcoord.x + distortion, v_texcoord.y);
+            gl_FragColor = texture2D(u_texture, position);
+        }
+    </script>
+
+    <script src="webgl-utils.js"></script>
+    <script src="m4.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
